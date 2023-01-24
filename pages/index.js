@@ -4,6 +4,9 @@ import styles from "./index.module.css";
 
 export default function Home() {
   const [animalInput, setAnimalInput] = useState("");
+  const [blogInput, setBlogInput] = useState("");
+  const [temp, setTemp] = useState(.6);
+  const [tokens, setTokens] = useState("");
   const [result, setResult] = useState();
 
   async function onSubmit(event) {
@@ -14,16 +17,18 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ animal: animalInput }),
+        body: JSON.stringify({ blog: blogInput }),
+        temp: temp,
       });
 
       const data = await response.json();
       if (response.status !== 200) {
         throw data.error || new Error(`Request failed with status ${response.status}`);
       }
-
+      setTokens(data.tokens);
       setResult(data.result);
-      setAnimalInput("");
+      // setAnimalInput("");
+      setBlogInput("");
     } catch(error) {
       // Consider implementing your own error handling logic here
       console.error(error);
@@ -31,27 +36,44 @@ export default function Home() {
     }
   }
 
+  const changeTemp = (event) => {
+    setTemp(event.target.value);
+  };
+      
+
   return (
     <div>
       <Head>
-        <title>OpenAI Quickstart</title>
+        <title>Hounder OpenAI Quickstart</title>
         <link rel="icon" href="/dog.png" />
       </Head>
 
       <main className={styles.main}>
         <img src="/dog.png" className={styles.icon} />
-        <h3>Name my pet</h3>
+        <h3>Create a meta description</h3>
         <form onSubmit={onSubmit}>
-          <input
-            type="text"
-            name="animal"
-            placeholder="Enter an animal"
-            value={animalInput}
-            onChange={(e) => setAnimalInput(e.target.value)}
+          <textarea
+            type="textarea"
+            rows="15"
+            cols="33"
+            name="blog"
+            placeholder="Enter a blog"
+            value={blogInput}
+            onChange={(e) => setBlogInput(e.target.value)}
           />
-          <input type="submit" value="Generate names" />
+          <div className="temperature">{temp} Temperature</div>
+          <input
+            type="range"
+            onChange={changeTemp}
+            min={0}
+            max={1}
+            step={0.1}
+            value={temp}
+          />
+          <input type="submit" value="Generate meta description" />
         </form>
         <div className={styles.result}>{result}</div>
+        <div className={styles.result}>{tokens} Tokens were used in total</div>
       </main>
     </div>
   );
