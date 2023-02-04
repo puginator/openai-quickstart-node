@@ -8,6 +8,7 @@ export default function Home() {
   const [temp, setTemp] = useState(.6);
   const [tokens, setTokens] = useState("");
   const [result, setResult] = useState();
+  const [keywordsInput, setKeywordsInput] = useState("");
 
   async function onSubmit(event) {
     event.preventDefault();
@@ -17,7 +18,7 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ blog: blogInput }),
+        body: JSON.stringify({ blog: blogInput, keywords:keywordsInput }),
         temp: temp,
       });
 
@@ -60,6 +61,13 @@ export default function Home() {
             placeholder="Enter a blog"
             value={blogInput}
             onChange={(e) => setBlogInput(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Enter keywords"
+            name="keywords"
+            value={keywordsInput}
+            onChange={(e) => setKeywordsInput(e.target.value)}
           />
           <div className="temperature">{temp} Temperature</div>
           <input

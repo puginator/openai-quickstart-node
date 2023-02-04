@@ -26,6 +26,16 @@ export default async function (req, res) {
     return;
   }
 
+  const keywords = req.body.keywords || "";
+  // if (keywords.trim().length === 0) {
+  //   res.status(400).json({
+  //     error: {
+  //       messag3e: "Please enter a valid article",
+  //     },
+  //   });
+  //   return;
+  // }
+
   // const animal = req.body.animal || '';
   // if (animal.trim().length === 0) {
   //   res.status(400).json({
@@ -39,7 +49,7 @@ export default async function (req, res) {
   try {
     const completion = await openai.createCompletion({
       model: "text-davinci-003",
-      prompt: generateMeta(blog),
+      prompt: generateMeta(blog, keywords),
       max_tokens: 500,
       temperature: req.temp,
     });
@@ -74,8 +84,26 @@ Animal: ${capitalizedAnimal}
 Names:`;
 }
 
-function generateMeta(blog) {
-  return `write a unique meta description about the article below.
+// function generateMeta(blog, keywords) {
+//   if (keywords) {
+//     return `write a unique meta description about the article below. Use a max of 75 words. The keywords must be used in the description.
+//     article:${blog}
+//     keywords:"${keywords}"
+//   `
+//   }
+//   return `write a unique meta description about the article below. Use a max of 75 words.
+//   article:${blog}
+//   `
+// }
+
+function generateMeta(blog, keywords) {
+  if (keywords) {
+    return `Generate a unique meta description for my article summarizing in under 40 words the main idea or theme. Utilize the keywords in the summary
+    article:${blog}
+    keywords:"${keywords}"
+  `;
+  }
+  return `Generate a unique meta description for my article summarizing in under 40 words the main idea or theme.
   article:${blog}
-  `
+  `;
 }
